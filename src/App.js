@@ -16,6 +16,16 @@ export default class App extends React.Component {
       movieTitleEdit: null,
       movieListReversed: false
     };
+
+    // functions binding
+    this.pushDataToFirebase = this.pushDataToFirebase.bind(this);
+    this.pullData = this.pullData.bind(this);
+    this.deleteMovie = this.deleteMovie.bind(this);
+    this.showModal = this.showModal.bind(this);
+    this.hideModal = this.hideModal.bind(this);
+    this.editMovie = this.editMovie.bind(this);
+    this.moviesData = this.moviesData.bind(this);
+    this.showEditDetails = this.showEditDetails.bind(this);
   }
 
   componentDidMount() {
@@ -35,8 +45,7 @@ export default class App extends React.Component {
       })
   }
 
-  render() {
-    const pushDataToFirebase = (movie) => {
+  pushDataToFirebase(movie){
       axios({
         url: `/moviesList/.json`,
         baseURL: 'https://react-on-rails-movies.firebaseio.com',
@@ -46,9 +55,9 @@ export default class App extends React.Component {
       .then((response) => {
         // console.log(response.data);
       })
-    }
+  }
 
-    const pullData = (movieTitle) => {
+  pullData(movieTitle){
       console.log(movieTitle);
       // parsing the movie title for the right format for the api call
       var array = movieTitle.split(' ');
@@ -70,7 +79,7 @@ export default class App extends React.Component {
         // if the movie title is not found in the api call, then alert 'Not Found!'
         if(response.data['Response'] === 'False') {
           // alert('Sorry, Movie Not Found!')
-          JSAlert.alert(`Sorry, Movie Not Found! Is '${movieTitle}' Spelled Right?`);
+          JSAlert.alert(`Sorry, movie not found! Is '${movieTitle}' spelled right?`);
         }
         else {
           var movieObj = response.data;
@@ -82,8 +91,8 @@ export default class App extends React.Component {
           this.setState({
             movies
           })
-          pushDataToFirebase(movieObj);
-          moviesData();
+          this.pushDataToFirebase(movieObj);
+          this.moviesData();
         }
       })
       .catch((message) => {
@@ -91,7 +100,7 @@ export default class App extends React.Component {
       });
     }
 
-    var deleteMovie = (movieTitle) => {
+    deleteMovie(movieTitle){
       let deleteKey = "";
       axios({
         url: `/moviesList/.json`,
@@ -125,7 +134,7 @@ export default class App extends React.Component {
       })
     }
 
-    var showModal = (movieId, moviePlot, movieTitle) => {
+    showModal(movieId, moviePlot, movieTitle){
       // console.log(movieId);
       this.setState({
         showModal: true,
@@ -135,14 +144,14 @@ export default class App extends React.Component {
       })
     }
 
-    var hideModal = () => {
+    hideModal(){
       this.setState({
         showModal: false
       })
     }
 
-    var editMovie = (updatedPlot) => {
-      hideModal();
+    editMovie(updatedPlot){
+      this.hideModal();
       let editKey = "";
       axios({
         url: `/moviesList/.json`,
@@ -171,7 +180,7 @@ export default class App extends React.Component {
       })
     }
 
-    var moviesData = () => {
+    moviesData(){
         return (
             this.state.movies.reverse().map(movie =>
               <Col xs={12} sm={4} md={3} lg={3} className="oneDetailBox">
@@ -181,9 +190,10 @@ export default class App extends React.Component {
                   <hr />
                   <p className="moviePlotBox" id={movie.id}>{movie.Plot}</p>
                   <p>
+                    <Button onClick={() => { this.deleteMovie(movie.Title) }}>Details</Button>&nbsp;
                     <Button bsStyle="primary" data-target="#contained-modal-title-lg"
-                          onClick={() => showModal(movie.id, movie.Plot, movie.Title)}>Edit</Button>&nbsp;
-                    <Button bsStyle="danger" onClick={() => { deleteMovie(movie.Title) }}>Delete</Button>
+                          onClick={() => this.showModal(movie.id, movie.Plot, movie.Title)}>Edit</Button>&nbsp;
+                    <Button bsStyle="danger" onClick={() => { this.deleteMovie(movie.Title) }}>Delete</Button>
                   </p>
                 </Thumbnail>
               </Col>
@@ -191,6 +201,70 @@ export default class App extends React.Component {
           )
     }
 
+    showEditDetails() {
+      return(
+        <ButtonToolbar>
+            <Modal
+              show={this.state.showModal}
+              onHide={() => this.hideModal()}
+              dialogClassName="custom-modal"
+            >
+              <Modal.Header closeButton>
+                <Modal.Title id="contained-modal-title-lg"><h3>{this.state.movieTitleEdit}</h3></Modal.Title>
+              </Modal.Header>
+              <Modal.Body>
+                <h4>Title</h4>
+                <input
+                  type="text"
+                  defaultValue={this.state.movieTitleEdit}
+                />
+                <h4>Runtime</h4>
+                <input
+                  type="text"
+                  defaultValue={this.state.movieTitleEdit}
+                />
+                <h4>Year</h4>
+                <input
+                  type="text"
+                  defaultValue={this.state.movieTitleEdit}
+                />
+                <h4>Genre</h4>
+                <input
+                  type="text"
+                  defaultValue={this.state.movieTitleEdit}
+                />
+                <h4>Synopsis</h4>
+                <textarea
+                  type="text"
+                  cols="78"
+                  rows="5"
+                  ref={(input) => { this.moviePlotUpdate = input; }}
+                  defaultValue={this.state.moviePlotEdit}
+                />
+                <h4>Directors</h4>
+                <input
+                  type="text"
+                  defaultValue={this.state.movieTitleEdit}
+                />
+                <h4>Stars</h4>
+                <input
+                  type="text"
+                  defaultValue={this.state.movieTitleEdit}
+                />
+
+              </Modal.Body>
+              <Modal.Footer>
+                <Button onClick={() => this.hideModal()}>Cancel</Button>
+                <Button bsStyle="primary" onClick={() => this.editMovie(this.moviePlotUpdate.value)}>Save</Button>
+              </Modal.Footer>
+            </Modal>
+          </ButtonToolbar>
+        )
+    }
+
+
+
+  render() {
     return (
       <div>
         <Grid>
@@ -209,7 +283,7 @@ export default class App extends React.Component {
                 bsStyle="primary"
                 onClick={() => {
                     // console.log(this.movieTitleInput.value);
-                    pullData(this.movieTitleInput.value)
+                    this.pullData(this.movieTitleInput.value)
                     this.movieTitleInput.value = "";
                   }
                 }
@@ -221,33 +295,11 @@ export default class App extends React.Component {
         </Grid>
         <Grid>
           <Row className="show-grid">
-            {moviesData()}
+            {this.moviesData()}
           </Row>
         </Grid>
-          <ButtonToolbar>
-            <Modal
-              show={this.state.showModal}
-              onHide={() => hideModal()}
-              dialogClassName="custom-modal"
-            >
-              <Modal.Header closeButton>
-                <Modal.Title id="contained-modal-title-lg">{this.state.movieTitleEdit}</Modal.Title>
-              </Modal.Header>
-              <Modal.Body>
-                <textarea
-                  type="text"
-                  cols="78"
-                  rows="5"
-                  ref={(input) => { this.moviePlotUpdate = input; }}
-                  defaultValue={this.state.moviePlotEdit}
-                />
-              </Modal.Body>
-              <Modal.Footer>
-                <Button onClick={() => hideModal()}>Close</Button>
-                <Button bsStyle="primary" onClick={() => editMovie(this.moviePlotUpdate.value)}>Save</Button>
-              </Modal.Footer>
-            </Modal>
-          </ButtonToolbar>
+        {this.showEditDetails()}
+
       </div>
     );
   }
