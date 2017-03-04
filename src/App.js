@@ -190,7 +190,7 @@ export default class App extends React.Component {
                   <hr />
                   <p className="moviePlotBox" id={movie.id}>{movie.Plot}</p>
                   <p>
-                    <Button onClick={() => { this.deleteMovie(movie.Title) }}>Details</Button>&nbsp;
+                    <Button onClick={() => { this.deleteMovie(movie.Title) }}>More Info</Button>&nbsp;
                     <Button bsStyle="primary" data-target="#contained-modal-title-lg"
                           onClick={() => this.showModal(movie.id, movie.Plot, movie.Title)}>Edit</Button>&nbsp;
                     <Button bsStyle="danger" onClick={() => { this.deleteMovie(movie.Title) }}>Delete</Button>
@@ -201,66 +201,6 @@ export default class App extends React.Component {
           )
     }
 
-    showEditDetails() {
-      return(
-        <ButtonToolbar>
-            <Modal
-              show={this.state.showModal}
-              onHide={() => this.hideModal()}
-              dialogClassName="custom-modal"
-            >
-              <Modal.Header closeButton>
-                <Modal.Title id="contained-modal-title-lg"><h3>{this.state.movieTitleEdit}</h3></Modal.Title>
-              </Modal.Header>
-              <Modal.Body>
-                <h4>Title</h4>
-                <input
-                  type="text"
-                  defaultValue={this.state.movieTitleEdit}
-                />
-                <h4>Runtime</h4>
-                <input
-                  type="text"
-                  defaultValue={this.state.movieTitleEdit}
-                />
-                <h4>Year</h4>
-                <input
-                  type="text"
-                  defaultValue={this.state.movieTitleEdit}
-                />
-                <h4>Genre</h4>
-                <input
-                  type="text"
-                  defaultValue={this.state.movieTitleEdit}
-                />
-                <h4>Synopsis</h4>
-                <textarea
-                  type="text"
-                  cols="78"
-                  rows="5"
-                  ref={(input) => { this.moviePlotUpdate = input; }}
-                  defaultValue={this.state.moviePlotEdit}
-                />
-                <h4>Directors</h4>
-                <input
-                  type="text"
-                  defaultValue={this.state.movieTitleEdit}
-                />
-                <h4>Stars</h4>
-                <input
-                  type="text"
-                  defaultValue={this.state.movieTitleEdit}
-                />
-
-              </Modal.Body>
-              <Modal.Footer>
-                <Button onClick={() => this.hideModal()}>Cancel</Button>
-                <Button bsStyle="primary" onClick={() => this.editMovie(this.moviePlotUpdate.value)}>Save</Button>
-              </Modal.Footer>
-            </Modal>
-          </ButtonToolbar>
-        )
-    }
 
 
 
@@ -268,6 +208,11 @@ export default class App extends React.Component {
     return (
       <div>
         <Grid>
+          <Row>
+            <Col xs={12} sm={12} md={12} lg={12}>
+              <h1 className="text-center">Movies & TV Shows Playlist</h1>
+            </Col>
+          </Row>
           <Row>
             <Col xs={12} sm={12} md={12} lg={12}>
               <center>
