@@ -5,16 +5,15 @@ import { Button, Modal, ButtonToolbar, Grid, Row, Col, Thumbnail } from 'react-b
 import './App.css';
 
 export default class App extends React.Component {
-
   constructor() {
     super();
     this.state = {
       movies: [],
       showModal: false,
-      movieIdEdit: null,
-      moviePlotEdit: null,
-      movieTitleEdit: null,
-      movieListReversed: false
+      movieListReversed: false,
+      movieIdDetails: null,
+      moviePlotDetails: null,
+      movieTitleDetails: null,
     };
 
     // functions binding
@@ -25,7 +24,7 @@ export default class App extends React.Component {
     this.hideModal = this.hideModal.bind(this);
     this.editMovie = this.editMovie.bind(this);
     this.moviesData = this.moviesData.bind(this);
-    this.showEditDetails = this.showEditDetails.bind(this);
+    this.showDetails = this.showDetails.bind(this);
   }
 
   componentDidMount() {
@@ -138,45 +137,15 @@ export default class App extends React.Component {
       // console.log(movieId);
       this.setState({
         showModal: true,
-        movieIdEdit: movieId,
-        moviePlotEdit: moviePlot,
-        movieTitleEdit: movieTitle
+        movieIdDetails: movieId,
+        moviePlotDetails: moviePlot,
+        movieTitleDetails: movieTitle
       })
     }
 
     hideModal(){
       this.setState({
         showModal: false
-      })
-    }
-
-    editMovie(updatedPlot){
-      this.hideModal();
-      let editKey = "";
-      axios({
-        url: `/moviesList/.json`,
-        baseURL: 'https://react-on-rails-movies.firebaseio.com',
-        method: "GET",
-      })
-      .then((response) => {
-        for (var movieKey in response.data) {
-          if (this.state.movieIdEdit === response.data[movieKey].id) {
-            console.log(movieKey);
-            editKey = movieKey;
-          }
-        }
-        // https://react-on-rails-movies.firebaseio.com/moviesList/-KdcOgCxuNSvHxna1v61/Plot
-        axios({
-          url: `/moviesList/${editKey}/.json`,
-          baseURL: 'https://react-on-rails-movies.firebaseio.com/',
-          method: "PATCH",
-          data: {'Plot': updatedPlot}
-        })
-        .then((response) => {
-          // console.log(response);
-          // update the state with new edited Plot
-          this.componentDidMount();
-        })
       })
     }
 
@@ -190,9 +159,11 @@ export default class App extends React.Component {
                   <hr />
                   <p className="moviePlotBox" id={movie.id}>{movie.Plot}</p>
                   <p>
-                    <Button onClick={() => { this.deleteMovie(movie.Title) }}>More Info</Button>&nbsp;
-                    <Button bsStyle="primary" data-target="#contained-modal-title-lg"
-                          onClick={() => this.showModal(movie.id, movie.Plot, movie.Title)}>Edit</Button>&nbsp;
+                    <Button
+                      onClick={() => {
+                        this.showModal(movie.Title. movie.Runtime, movie.Year, movie.Genre, movie.Plot, movie.Director, movie.Actors)
+                      }}>More Info
+                    </Button>&nbsp;
                     <Button bsStyle="danger" onClick={() => { this.deleteMovie(movie.Title) }}>Delete</Button>
                   </p>
                 </Thumbnail>
@@ -201,8 +172,40 @@ export default class App extends React.Component {
           )
     }
 
-
-
+    showDetails() {
+      return(
+        <ButtonToolbar>
+            <Modal
+              show={this.state.showModal}
+              onHide={() => this.hideModal()}
+              dialogClassName="custom-modal"
+            >
+              <Modal.Header closeButton>
+                <Modal.Title id="contained-modal-title-lg"><h3>{this.state.movieTitleDetails}</h3></Modal.Title>
+              </Modal.Header>
+              <Modal.Body>
+                <h4>Title</h4>
+                <h5>{this.state.movieTitleDetails}</h5>
+                <h4>Runtime</h4>
+                <h5>{this.state.movieTitleDetails}</h5>
+                <h4>Year</h4>
+                <h5>{this.state.movieTitleDetails}</h5>
+                <h4>Genre</h4>
+                <h5>{this.state.movieTitleDetails}</h5>
+                <h4>Plot</h4>
+                <h5>{this.state.moviePlotDetails}</h5>
+                <h4>Directors</h4>
+                <h5>{this.state.movieTitleDetails}</h5>
+                <h4>Actors</h4>
+                <h5>{this.state.movieTitleDetails}</h5>
+              </Modal.Body>
+              <Modal.Footer>
+                <Button bsStyle="primary" onClick={() => this.hideModal()}>Okay</Button>
+              </Modal.Footer>
+            </Modal>
+          </ButtonToolbar>
+        )
+    }
 
   render() {
     return (
@@ -227,7 +230,6 @@ export default class App extends React.Component {
               <Button
                 bsStyle="primary"
                 onClick={() => {
-                    // console.log(this.movieTitleInput.value);
                     this.pullData(this.movieTitleInput.value)
                     this.movieTitleInput.value = "";
                   }
@@ -243,8 +245,7 @@ export default class App extends React.Component {
             {this.moviesData()}
           </Row>
         </Grid>
-        {this.showEditDetails()}
-
+        {this.showDetails()}
       </div>
     );
   }
