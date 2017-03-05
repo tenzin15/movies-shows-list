@@ -260,7 +260,7 @@ export default class App extends React.Component {
                 name="movieName"
                 className="inputBox"
                 ref={(input) => { this.movieTitleInput = input; }}
-                placeholder="Enter Movie Title"
+                placeholder="Enter Movie or TV Show Title"
                 size="70"
               />
               <Button
