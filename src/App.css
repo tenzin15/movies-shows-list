@@ -1,11 +1,16 @@
 img {
-  width: 235px;
+/*  width: 235px;
   height: 250px;
+*/
+  width: 23.5rem;
+  height: 25rem;
 }
 
 .moviePlotBox {
-  width: 230px;
-  height: 200px;
+  /*width: 230px;
+  height: 200px;*/
+  /*width: 24rem;*/
+  height: 15rem;
   overflow: scroll;
 }
 
@@ -17,3 +22,21 @@ img {
   background-color: darkgrey;
   outline: 1px solid slategrey;
 }
+
+.fa {
+  font-size: 22px;
+}
+
+.fa:hover {
+  color: #428BCA;
+  cursor: pointer;
+}
+
+.inputBox {
+  height: 3.2rem;
+  font-size: 16px;
+  width: 40%;
+  margin: 0 auto;
+  margin: 5px;
+}
+

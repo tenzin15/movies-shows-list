@@ -11,9 +11,14 @@ export default class App extends React.Component {
       movies: [],
       showModal: false,
       movieListReversed: false,
-      movieIdDetails: null,
-      moviePlotDetails: null,
+      movieImageDetails: null,
       movieTitleDetails: null,
+      movieRuntimeDetails: null,
+      movieYearDetails: null,
+      movieGenreDetails: null,
+      moviePlotDetails: null,
+      movieDirectorDetails: null,
+      movieActorDetails: null,
     };
 
     // functions binding
@@ -22,7 +27,6 @@ export default class App extends React.Component {
     this.deleteMovie = this.deleteMovie.bind(this);
     this.showModal = this.showModal.bind(this);
     this.hideModal = this.hideModal.bind(this);
-    this.editMovie = this.editMovie.bind(this);
     this.moviesData = this.moviesData.bind(this);
     this.showDetails = this.showDetails.bind(this);
   }
@@ -99,7 +103,7 @@ export default class App extends React.Component {
       });
     }
 
-    deleteMovie(movieTitle){
+    deleteMovie(movieID){
       let deleteKey = "";
       axios({
         url: `/moviesList/.json`,
@@ -108,8 +112,7 @@ export default class App extends React.Component {
       })
       .then((response) => {
         for (var movieKey in response.data) {
-          if (movieTitle === response.data[movieKey].Title) {
-            // console.log(movieKey);
+          if (movieID === response.data[movieKey].id) {
             deleteKey = movieKey;
           }
         }
@@ -122,7 +125,7 @@ export default class App extends React.Component {
           var array = this.state.movies;
           var updateArray = [];
           array.forEach(el => {
-            if (el.Title !== movieTitle) {
+            if (el.id !== movieID) {
               updateArray.push(el);
             }
           })
@@ -133,13 +136,18 @@ export default class App extends React.Component {
       })
     }
 
-    showModal(movieId, moviePlot, movieTitle){
+    showModal(movieImage, movieTitle, movieRuntime, movieYear, movieGenre, moviePlot, movieDirector, movieActors) {
       // console.log(movieId);
       this.setState({
         showModal: true,
-        movieIdDetails: movieId,
+        movieImageDetails: movieImage,
+        movieTitleDetails: movieTitle,
+        movieRuntimeDetails: movieRuntime,
+        movieYearDetails: movieYear,
+        movieGenreDetails: movieGenre,
         moviePlotDetails: moviePlot,
-        movieTitleDetails: movieTitle
+        movieDirectorDetails: movieDirector,
+        movieActorDetails: movieActors,
       })
     }
 
@@ -152,20 +160,24 @@ export default class App extends React.Component {
     moviesData(){
         return (
             this.state.movies.reverse().map(movie =>
-              <Col xs={12} sm={4} md={3} lg={3} className="oneDetailBox">
+              <Col xs={12} sm={6} md={4} lg={3} className="oneDetailBox">
                 <Thumbnail>
                   <img src={movie.Poster} />
-                  <h3 >{movie.Title}</h3>
+                  <h3>{movie.Title}&nbsp;
+                    <i
+                      className="fa fa-trash pull-right"
+                      aria-hidden="true"
+                      onClick={() => { this.deleteMovie(movie.id) }}>
+                    </i>
+                    <i className="fa fa-info-circle pull-right"
+                       aria-hidden="true"
+                       onClick={() => {
+                        this.showModal(movie.Poster, movie.Title, movie.Runtime, movie.Year, movie.Genre, movie.Plot, movie.Director, movie.Actors)
+                      }}>
+                    </i>
+                  </h3>
                   <hr />
                   <p className="moviePlotBox" id={movie.id}>{movie.Plot}</p>
-                  <p>
-                    <Button
-                      onClick={() => {
-                        this.showModal(movie.Title. movie.Runtime, movie.Year, movie.Genre, movie.Plot, movie.Director, movie.Actors)
-                      }}>More Info
-                    </Button>&nbsp;
-                    <Button bsStyle="danger" onClick={() => { this.deleteMovie(movie.Title) }}>Delete</Button>
-                  </p>
                 </Thumbnail>
               </Col>
             )
@@ -174,6 +186,9 @@ export default class App extends React.Component {
 
     showDetails() {
       return(
+        <Grid>
+        <Row>
+        <Col xs={12} sm={12} md={12} lg={12}>
         <ButtonToolbar>
             <Modal
               show={this.state.showModal}
@@ -184,26 +199,30 @@ export default class App extends React.Component {
                 <Modal.Title id="contained-modal-title-lg"><h3>{this.state.movieTitleDetails}</h3></Modal.Title>
               </Modal.Header>
               <Modal.Body>
+                <img src={this.state.movieImageDetails} />
                 <h4>Title</h4>
                 <h5>{this.state.movieTitleDetails}</h5>
                 <h4>Runtime</h4>
-                <h5>{this.state.movieTitleDetails}</h5>
+                <h5>{this.state.movieRuntimeDetails}</h5>
                 <h4>Year</h4>
-                <h5>{this.state.movieTitleDetails}</h5>
+                <h5>{this.state.movieYearDetails}</h5>
                 <h4>Genre</h4>
-                <h5>{this.state.movieTitleDetails}</h5>
+                <h5>{this.state.movieGenreDetails}</h5>
                 <h4>Plot</h4>
                 <h5>{this.state.moviePlotDetails}</h5>
                 <h4>Directors</h4>
-                <h5>{this.state.movieTitleDetails}</h5>
+                <h5>{this.state.movieDirectorDetails}</h5>
                 <h4>Actors</h4>
-                <h5>{this.state.movieTitleDetails}</h5>
+                <h5>{this.state.movieActorDetails}</h5>
               </Modal.Body>
               <Modal.Footer>
                 <Button bsStyle="primary" onClick={() => this.hideModal()}>Okay</Button>
               </Modal.Footer>
             </Modal>
           </ButtonToolbar>
+          </Col>
+          </Row>
+          </Grid>
         )
     }
 
@@ -222,11 +241,11 @@ export default class App extends React.Component {
               <input
                 type="text"
                 name="movieName"
+                className="inputBox"
                 ref={(input) => { this.movieTitleInput = input; }}
-                placeholder="Enter Movie Title You Want To Add"
+                placeholder="Enter Movie Title"
                 size="70"
               />
-              <br /><br />
               <Button
                 bsStyle="primary"
                 onClick={() => {
