@@ -3,6 +3,7 @@ import axios from 'axios';
 import JSAlert from 'js-alert';
 import { Button, Modal, ButtonToolbar, Grid, Row, Col, Thumbnail } from 'react-bootstrap';
 import './App.css';
+import alertify from 'alertify.js';
 
 export default class App extends React.Component {
   constructor() {
@@ -94,6 +95,12 @@ export default class App extends React.Component {
           this.setState({
             movies
           })
+          // new movie added successfully msg
+          const msg = "<p>Movie Added Succesfully!</p><hr/>"
+            + `<img src=${movieObj.Poster}>` +
+            `<h3>${movieObj.Title}</h3>`;
+          alertify.log(msg);
+
           this.pushDataToFirebase(movieObj);
           this.moviesData();
         }
@@ -105,6 +112,8 @@ export default class App extends React.Component {
 
     deleteMovie(movieID){
       let deleteKey = "";
+      let moviePosterURL = null;
+      let movieTitle = null;
       axios({
         url: `/moviesList/.json`,
         baseURL: 'https://react-on-rails-movies.firebaseio.com',
@@ -114,6 +123,8 @@ export default class App extends React.Component {
         for (var movieKey in response.data) {
           if (movieID === response.data[movieKey].id) {
             deleteKey = movieKey;
+            moviePosterURL = response.data[movieKey].Poster;
+            movieTitle = response.data[movieKey].Title;
           }
         }
         axios({
@@ -129,6 +140,12 @@ export default class App extends React.Component {
               updateArray.push(el);
             }
           })
+          // movie deleted successfully msg
+          const msg = "<p>Movie Deleted Succesfully!</p><hr/>"
+            + `<img src=${moviePosterURL}>` +
+            `<h3>${movieTitle}</h3>`;
+          alertify.log(msg);
+
           this.setState({
             movies: updateArray
           })
