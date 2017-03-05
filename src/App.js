@@ -76,7 +76,7 @@ export default class App extends React.Component {
       })
 
       axios({
-        url: `http://www.omdbapi.com/?t=${movieTitleParsed}&y=&plot=full&r=json`,
+        url: `https://www.omdbapi.com/?t=${movieTitleParsed}&y=&plot=full&r=json`,
         method: "GET"
       })
       .then((response) => {
