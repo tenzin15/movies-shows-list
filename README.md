@@ -17,6 +17,6 @@ A app that lets you create a beautiful movies & tv shows list simply by just typ
 *   OMBD (Open Movie Database) API
 
 #### What the app looks like?
-![App Screenshot](https://github.com/tenzin15/movies_shows_list/blob/master/movies-list.png
+![App Screenshot](https://github.com/tenzin15/movies-shows-list/blob/master/movies-list.png
 ) 
 
